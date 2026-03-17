@@ -1,73 +1,39 @@
-# React + TypeScript + Vite
+# Work Quest Stats Dashboard
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A lightweight React + Vite single-page app that pulls Harry's work stats, XP hooks, and level curve directly from the shared Google Sheet and renders them as a glassy, distraction-free dashboard. Designed for GitHub Pages hosting.
 
-Currently, two official plugins are available:
+![screenshot](public/favicon.svg)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Tech stack
 
-## React Compiler
+- **React + TypeScript + Vite** for a fast static build
+- **Google Sheets GViz API** for zero-backend data access
+- **gh-pages** CLI to publish to the `gh-pages` branch
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Local development
 
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm install --include=dev  # ensures TypeScript + Vite deps are installed
+npm run dev                # start Vite dev server
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+Environment values (sheet IDs, tab names) live inside `src/App.tsx`. Update them if the spreadsheet structure changes.
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## Build + deploy
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```bash
+npm run build   # type-check + production bundle (outputs to dist/)
+npm run deploy  # builds + pushes dist/ to the gh-pages branch
 ```
+
+GitHub Pages is configured to serve from `gh-pages` → `/`. Once a deploy finishes, the site is available at <https://sora-claw.github.io/stats/>.
+
+## Data tabs consumed
+
+| Sheet tab  | Purpose                     |
+|------------|-----------------------------|
+| `Harry`    | Core stats + XP hooks text  |
+| `XP_Hooks` | Action → XP matrix          |
+| `XP_Levels`| Level 1–99 XP curve         |
+
+Any additional tabs can be wired up by repeating the `fetchSheet()` pattern in `src/App.tsx`.
